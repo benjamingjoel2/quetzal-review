@@ -1,0 +1,25 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { Image } from 'astro:assets';
+import { PHOTOS, photoSource } from '../data/photos';
+---
+<InfoPage title="Photo credits" description="Every photograph on Quetzal Review, with its author, licence and source on Wikimedia Commons." path="/photo-credits/">
+  <p>Every photograph on Quetzal Review is a real photograph, freely licensed on Wikimedia Commons and shown with its author and licence. We do not use AI-generated images, and we avoid close-up photographs of identifiable people. Images are resized and compressed for the web; no other changes are made.</p>
+  <ul class="credits">
+    {Object.values(PHOTOS).map((p) => (
+      <li>
+        <Image src={p.src} alt="" width={240} format="webp" quality={60} loading="lazy" />
+        <div>
+          <strong>{p.caption}</strong><br />
+          Photo: {p.author} · <a href={p.licenseUrl} rel="license">{p.license}</a> · <a href={photoSource(p)}>Source on Wikimedia Commons</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+  <p>If you are the author of one of these photographs and would like the credit changed, email us.</p>
+</InfoPage>
+<style>
+  .credits { list-style: none; padding: 0 !important; }
+  .credits li { display: grid; grid-template-columns: 96px 1fr; gap: 1rem; align-items: start; padding: 0.75rem 0; border-bottom: 1px solid var(--line); font-size: 0.975rem; }
+  .credits img { width: 96px; height: 64px; object-fit: cover; border-radius: var(--radius); }
+</style>

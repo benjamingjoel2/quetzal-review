@@ -1,0 +1,28 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { SITE } from '../data/taxonomy';
+---
+<InfoPage title="About Quetzal Review" description="Quetzal Review is a story-led, practical travel blog about Guatemala, published by Tourground." path="/about/" type="AboutPage">
+  <p>Quetzal Review is a travel blog for people planning a trip to Guatemala. We write about Maya sites, volcanoes, markets and lakes in a way that helps you picture a place first and then work out how to get there, how long to stay and what to check before you go.</p>
+
+  <h2>Published by Tourground</h2>
+  <p><strong>Quetzal Review is published by Tourground</strong> (<a href={SITE.publisher.url}>tourground.com</a>), which runs a directory of verified travel companies. Every story ends with a “Plan this trip” box that points you to a local operator listed in that directory, such as <a href="https://antiguaandbeyond.tourground.com/">Antigua &amp; Beyond</a> for trips in Guatemala. Our <a href="/disclosure/">disclosure page</a> explains how that relationship works and how Tourground makes money.</p>
+
+  <h2>How we write</h2>
+  <ul>
+    <li><strong>Sources first.</strong> Facts that matter for your safety, health, entry or wallet are taken from official and primary sources: governments, heritage and park authorities, and public health agencies. Each story lists its sources at the end and links the source in the text.</li>
+    <li><strong>Dates you can see.</strong> Every story shows when it was published and last updated. Where a story covers health, visa or safety advice, it also says when those facts were last checked.</li>
+    <li><strong>Nothing invented.</strong> We do not publish invented reviews, quotes, prices or statistics. Where we could not confirm a number from a reliable source, we leave it out and tell you where to check.</li>
+    <li><strong>No pretending.</strong> Our stories are written by the Quetzal Review editors from research. We describe places vividly, but we do not claim personal experiences that did not happen.</li>
+    <li><strong>Respect.</strong> Guatemala’s Maya communities are living cultures. We ask readers to travel respectfully, to ask before photographing people and to follow local guidance at sacred sites.</li>
+  </ul>
+
+  <h2>Advertising</h2>
+  <p>Quetzal Review does not currently carry advertising. If we ever publish a paid placement, it will be labelled “Advertisement feature” at the top of the page and on every link to it, and kept separate from our editorial stories.</p>
+
+  <h2>Photographs</h2>
+  <p>We use real photographs that are freely licensed on Wikimedia Commons, with the photographer and licence shown under each image and on our <a href="/photo-credits/">photo credits</a> page. We do not use AI-generated images.</p>
+
+  <h2>Contact and corrections</h2>
+  <p>If something in a story is wrong or out of date, email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. We check corrections against the source and update the story and its “last updated” date.</p>
+</InfoPage>

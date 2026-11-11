@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from './PostCard.astro';
+import type { Post } from '../lib/site';
+import { abs, postUrl } from '../lib/site';
+import type { Crumb } from '../lib/schema';
+interface Props { title: string; intro: string; description: string; posts: Post[]; crumbs: Crumb[] }
+const { title, intro, description, posts, crumbs } = Astro.props;
+const collection = {
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: abs(crumbs[crumbs.length - 1].path),
+  mainEntity: { '@type': 'ItemList', itemListElement: posts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(postUrl(p)), name: p.data.title })) },
+};
+---
+<Base title={title} description={description} crumbs={crumbs} extraSchema={[collection]}>
+  <div class="wrap page">
+    <h1>{title}</h1>
+    <p class="page-intro">{intro}</p>
+    <slot />
+    {posts.length ? (
+      <div class="grid three listing">
+        {posts.map((p, i) => <PostCard post={p} headingLevel="h2" eager={i < 2} />)}
+      </div>
+    ) : <p>New stories are on the way. In the meantime, <a href="/posts/">browse all stories</a>.</p>}
+  </div>
+</Base>
+<style>
+  .listing { margin-top: 2rem; }
+</style>

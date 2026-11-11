@@ -1,0 +1,26 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { SITE } from '../data/taxonomy';
+---
+<InfoPage title="Terms of use" description="The terms for using Quetzal Review." path="/terms/">
+  <h2>Using this site</h2>
+  <p>Quetzal Review is published by Tourground. By using this site you agree to these terms.</p>
+
+  <h2>Travel information</h2>
+  <p>Our stories are general information to help you plan, not professional, legal, medical or safety advice. Entry rules, health advice, travel advisories, opening arrangements and conditions on volcanoes and roads change, sometimes without notice. Always check the official sources we link, and follow the advice of local authorities and your guides, before and during your trip.</p>
+
+  <h2>Bookings</h2>
+  <p>We do not sell trips. If you book with an operator linked from this site, your contract is with that operator, on its terms. Tourground and Quetzal Review are not party to that contract.</p>
+
+  <h2>Content and photographs</h2>
+  <p>Text on this site is © Tourground unless stated otherwise. Photographs belong to their authors and are used under the licences shown with each image and on our <a href="/photo-credits/">photo credits</a> page; you may reuse them under those licences.</p>
+
+  <h2>Links</h2>
+  <p>We link to other websites for your convenience and as citations. We are not responsible for their content.</p>
+
+  <h2>Liability</h2>
+  <p>We take care to keep stories accurate and up to date, but to the extent permitted by law we accept no liability for loss arising from reliance on them. Nothing in these terms limits liability that cannot be limited by law.</p>
+
+  <h2>Changes and contact</h2>
+  <p>We may update these terms; the date at the top shows the last review. Contact: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+</InfoPage>

@@ -1,0 +1,26 @@
+---
+import { SITE } from '../data/taxonomy';
+const path = Astro.url.pathname;
+const links = [
+  { href: '/category/destinations/', label: 'Destinations' },
+  { href: '/category/maya-culture/', label: 'Maya Culture' },
+  { href: '/category/volcanoes-hiking/', label: 'Volcanoes & Hiking' },
+  { href: '/category/itineraries/', label: 'Itineraries' },
+  { href: '/category/food/', label: 'Food' },
+  { href: '/category/travel-tips/', label: 'Travel Tips' },
+  { href: '/about/', label: 'About' },
+];
+---
+<div class="weave" aria-hidden="true"></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/">{SITE.name}<span>Guatemala travel stories · by Tourground</span></a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {links.map((l) => (
+          <li><a href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

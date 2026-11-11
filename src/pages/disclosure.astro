@@ -1,0 +1,21 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { SITE } from '../data/taxonomy';
+---
+<InfoPage title="Disclosure" description="Who publishes Quetzal Review, how Tourground makes money, how operators are chosen for the Plan this trip box, and how paid content is labelled." path="/disclosure/">
+  <h2>Publisher</h2>
+  <p>Quetzal Review is published by Tourground. Tourground runs a directory of travel companies and earns money from paid plans sold to those companies. Some travel brands in the Tourground network are owned by Tourground’s founders.</p>
+
+  <h2>The “Plan this trip” box</h2>
+  <p>Every story ends with a box linking to a local operator listed in the Tourground directory. For Guatemala this is usually <a href="https://antiguaandbeyond.tourground.com/">Antigua &amp; Beyond</a>; for Belize it is <a href="https://cayecoast.tourground.com/">Caye Coast</a>. Both are part of the Tourground network. Because Tourground publishes this blog and runs that directory, you should treat these links as recommendations from an interested party. We choose the operator by what the story is about, not by payment, and no operator pays to appear in a story or in the box.</p>
+  <p>You are always free to book with any company you like. The box also links to the <a href={SITE.directoryUrl}>Tourground directory</a> so you can compare other operators.</p>
+
+  <h2>Editorial independence</h2>
+  <p>Stories are written to be useful to travellers. Operators do not review or approve stories before publication. We do not accept payment, free trips or gifts in exchange for coverage.</p>
+
+  <h2>Paid placements</h2>
+  <p>We do not currently publish paid content. If we do, it will be labelled <strong>“Advertisement feature”</strong> at the top of the page and wherever it is listed, and links in it will be marked <code>rel="sponsored"</code>.</p>
+
+  <h2>Links to sources</h2>
+  <p>Links in a story’s “Sources” list are citations to the pages we used. They are not endorsements and earn us nothing.</p>
+</InfoPage>

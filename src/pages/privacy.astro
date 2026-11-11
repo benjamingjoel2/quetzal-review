@@ -1,0 +1,29 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { SITE } from '../data/taxonomy';
+---
+<InfoPage title="Privacy notice" description="What personal data Quetzal Review collects, why, and your rights." path="/privacy/">
+  <h2>Who we are</h2>
+  <p>Quetzal Review is published by Tourground. For privacy questions, email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li><strong>Browsing.</strong> This site has no analytics, advertising or tracking scripts and sets no cookies. Our hosting provider, Vercel, processes technical data such as IP addresses in server logs to deliver and protect the site.</li>
+    <li><strong>Email.</strong> If you email us, including to sign up to the newsletter, we receive your email address and whatever you include in your message. We use it to reply to you and, if you asked, to send the newsletter.</li>
+  </ul>
+
+  <h2>Why we use it</h2>
+  <p>We send the newsletter only with your consent, which you can withdraw at any time by replying “unsubscribe”. We answer other emails because you asked us to. We keep server logs to run the site securely.</p>
+
+  <h2>Sharing</h2>
+  <p>We do not sell your data or share it with operators or advertisers. Data is processed by our hosting and email providers on our behalf.</p>
+
+  <h2>How long we keep it</h2>
+  <p>We keep newsletter addresses until you unsubscribe, and other correspondence for as long as needed to deal with it.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask to see, correct or delete the personal data we hold about you, or object to how we use it, by emailing <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. You may also complain to your local data protection authority.</p>
+
+  <h2>Links to other sites</h2>
+  <p>Stories link to official sources and to operators’ websites. Those sites have their own privacy policies.</p>
+</InfoPage>

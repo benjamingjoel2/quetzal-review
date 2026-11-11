@@ -1,0 +1,31 @@
+---
+import { SITE } from '../data/taxonomy';
+const subject = encodeURIComponent('Subscribe to Quetzal Review');
+const body = encodeURIComponent('Please add this address to the Quetzal Review newsletter.\n\nI understand I can unsubscribe at any time by replying "unsubscribe".');
+---
+<section class="newsletter" aria-labelledby="nl-h">
+  <div>
+    <h2 id="nl-h">The Quetzal Review letter</h2>
+    <p>New stories and important changes to entry, health and safety advice for Guatemala, sent when there is something worth reading. No adverts, and we never share your address.</p>
+  </div>
+  <div class="nl-actions">
+    <a class="button" href={`mailto:${SITE.email}?subject=${subject}&body=${body}`}>Sign up by email</a>
+    <p class="nl-note">Opens your email app with a message to {SITE.email}. Prefer a feed? <a href="/rss.xml">Follow the RSS feed</a>. See our <a href="/privacy/">privacy notice</a>.</p>
+  </div>
+</section>
+<style>
+  .newsletter {
+    display: grid;
+    gap: 1rem 2rem;
+    background: var(--green-tint);
+    border: 1px solid #c4d8ca;
+    border-radius: var(--radius);
+    padding: 1.5rem 1.25rem;
+  }
+  .newsletter h2 { margin: 0 0 0.5rem; }
+  .newsletter p { margin-bottom: 0.5rem; }
+  .nl-note { font-size: 0.9rem; color: var(--muted); }
+  @media (min-width: 48rem) {
+    .newsletter { grid-template-columns: 3fr 2fr; align-items: center; padding: 2rem; }
+  }
+</style>

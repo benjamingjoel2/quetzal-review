@@ -1,0 +1,45 @@
+---
+import { SITE, CATEGORIES, DESTINATIONS } from '../data/taxonomy';
+const year = new Date().getUTCFullYear();
+---
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-brand">{SITE.name}</p>
+        <p>Story-led, practical travel writing for people planning a trip to Guatemala, with sources for every fact that matters and a local operator for every trip.</p>
+        <p class="foot-pub"><a href={SITE.publisher.url}>Published by Tourground</a></p>
+        <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+      </div>
+      <nav aria-label="Categories">
+        <h2>Categories</h2>
+        <ul>
+          {Object.entries(CATEGORIES).map(([slug, c]) => <li><a href={`/category/${slug}/`}>{c.name}</a></li>)}
+        </ul>
+      </nav>
+      <nav aria-label="Destinations">
+        <h2>Destinations</h2>
+        <ul>
+          {Object.entries(DESTINATIONS).map(([slug, d]) => <li><a href={`/destinations/${slug}/`}>{d.name}</a></li>)}
+        </ul>
+      </nav>
+      <nav aria-label="About this site">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/authors/">Authors</a></li>
+          <li><a href="/disclosure/">Disclosure</a></li>
+          <li><a href="/photo-credits/">Photo credits</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/cookies/">Cookies</a></li>
+          <li><a href="/terms/">Terms</a></li>
+          <li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="foot-bottom">
+      <span>© {year} Tourground · Published by Tourground</span>
+      <span>quetzalreview.tourground.com</span>
+    </div>
+  </div>
+</footer>

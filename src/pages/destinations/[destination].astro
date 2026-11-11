@@ -1,0 +1,19 @@
+---
+import ListingPage from '../../components/ListingPage.astro';
+import { DESTINATIONS, DESTINATION_SLUGS, type DestinationSlug } from '../../data/taxonomy';
+import { getPosts } from '../../lib/site';
+
+export function getStaticPaths() {
+  return DESTINATION_SLUGS.map((destination) => ({ params: { destination } }));
+}
+const slug = Astro.params.destination as DestinationSlug;
+const d = DESTINATIONS[slug];
+const posts = (await getPosts()).filter((p) => p.data.destinations.includes(slug));
+---
+<ListingPage
+  title={d.name}
+  intro={d.intro}
+  description={`${d.name}, Guatemala: ${d.intro}`}
+  posts={posts}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Destinations', path: '/category/destinations/' }, { name: d.name, path: `/destinations/${slug}/` }]}
+/>

@@ -1,0 +1,145 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { PHOTOS, photoSource } from '../data/photos';
+import { CATEGORIES, SITE } from '../data/taxonomy';
+import { getPosts, postUrl, readingMinutes, formatDate, isoDate, abs } from '../lib/site';
+
+const posts = await getPosts();
+const featured = posts.find((p) => p.data.featured && !p.data.startHere) ?? posts.find((p) => p.data.featured) ?? posts[0];
+
+const START_ORDER = [
+  'first-timers-guide-to-guatemala',
+  'is-guatemala-safe-for-travellers',
+  'ten-day-guatemala-itinerary',
+  'antigua-what-to-see-how-long-to-stay',
+  'visiting-tikal-at-sunrise',
+];
+const rank = (id: string) => (START_ORDER.includes(id) ? START_ORDER.indexOf(id) : 99);
+const startHere = posts
+  .filter((p) => p.data.startHere)
+  .sort((a, b) => rank(a.id) - rank(b.id));
+const latest = posts.filter((p) => p.id !== featured.id).slice(0, 6);
+
+const photo = PHOTOS[featured.data.hero];
+const widths = [480, 768, 1024, 1440, 1920];
+const imgs = await Promise.all(widths.map((w) => getImage({ src: photo.src, width: w, format: 'webp', quality: 72 })));
+const srcset = imgs.map((img, i) => `${img.src} ${widths[i]}w`).join(', ');
+const sizes = '(min-width: 64rem) 60vw, 100vw';
+
+const itemList = {
+  '@type': 'ItemList',
+  name: 'Latest stories',
+  itemListElement: posts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(postUrl(p)), name: p.data.title })),
+};
+---
+
+<Base title={SITE.name} description={SITE.description} crumbs={[{ name: 'Home', path: '/' }]} extraSchema={[itemList]} preloadImage={{ srcset, sizes }}>
+  <h1 class="visually-hidden">Quetzal Review: Guatemala travel stories and guides</h1>
+
+  <section class="feature" aria-labelledby="feature-h">
+    <div class="wrap feature-grid">
+      <figure class="feature-img">
+        <img src={imgs[2].src} srcset={srcset} sizes={sizes} alt={photo.alt} width={photo.src.width} height={photo.src.height} fetchpriority="high" decoding="async" />
+        <figcaption>Photo: <a href={photoSource(photo)}>{photo.author}</a>, <a href={photo.licenseUrl} rel="license">{photo.license}</a></figcaption>
+      </figure>
+      <div class="feature-text">
+        <p class="eyebrow">Featured story</p>
+        <h2 id="feature-h"><a href={postUrl(featured)}>{featured.data.title}</a></h2>
+        <p class="feature-desc">{featured.data.description}</p>
+        <p class="meta"><time datetime={isoDate(featured.data.pubDate)}>{formatDate(featured.data.pubDate)}</time> · {readingMinutes(featured.body)} min read</p>
+        <p><a class="button" href={postUrl(featured)}>Read the story</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section start" aria-labelledby="start-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="start-h">Start here</h2>
+        <p class="meta">New to Guatemala? Read these first, in this order.</p>
+      </div>
+      <ol class="start-list">
+        {startHere.map((p) => (
+          <li>
+            <a href={postUrl(p)}>{p.data.title}</a>
+            <span>{readingMinutes(p.body)} min read</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="latest-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="latest-h">Latest stories</h2>
+        <a href="/posts/">All stories</a>
+      </div>
+      <div class="grid three">
+        {latest.map((p, i) => <PostCard post={p} eager={i < 1} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cats-h">
+    <div class="wrap">
+      <h2 id="cats-h" class="cats-title">Browse by category</h2>
+      <ul class="cats">
+        {Object.entries(CATEGORIES).map(([slug, c]) => {
+          const n = posts.filter((p) => p.data.categories.includes(slug as keyof typeof CATEGORIES)).length;
+          return (
+            <li>
+              <a href={`/category/${slug}/`}>{c.name}</a>
+              <p>{c.intro}</p>
+              <p class="meta">{n} {n === 1 ? 'story' : 'stories'}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Newsletter">
+    <div class="wrap">
+      <Newsletter />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .feature { padding: 1.5rem 0 2rem; }
+  .feature-grid { display: grid; gap: 1.25rem; }
+  .feature-img { margin: 0; }
+  .feature-img img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); background: var(--sand); }
+  .feature-img figcaption { font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem; }
+  .feature-img figcaption a { color: var(--muted); }
+  .feature-text h2 { font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.4rem); margin: 0 0 0.75rem; }
+  .feature-text h2 a { color: var(--ink); text-decoration: none; }
+  .feature-text h2 a:hover { text-decoration: underline; color: var(--green-deep); }
+  .feature-desc { font-family: var(--serif); font-size: 1.25rem; line-height: 1.45; color: var(--muted); }
+  @media (min-width: 64rem) {
+    .feature-grid { grid-template-columns: 3fr 2fr; align-items: center; gap: 2.5rem; }
+  }
+  .start { background: var(--paper); border-top: 1px solid var(--line); }
+  .start-list { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+  .start-list li { counter-increment: s; display: grid; grid-template-columns: 2.25rem 1fr; column-gap: 0.5rem; align-items: baseline; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
+  .start-list li::before { content: counter(s); grid-row: span 2; font-family: var(--serif); font-size: 1.5rem; font-weight: 600; color: var(--red); }
+  .start-list a { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; color: var(--ink); }
+  .start-list a:hover { color: var(--green-deep); }
+  .start-list span { font-size: 0.875rem; color: var(--muted); }
+  @media (min-width: 64rem) {
+    .start-list { grid-template-columns: repeat(5, 1fr); gap: 1.25rem; }
+    .start-list li { grid-template-columns: 1fr; border-bottom: 0; border-top: 3px solid var(--green); padding-top: 0.75rem; }
+    .start-list li::before { grid-row: auto; }
+  }
+  .cats-title { margin-top: 0; }
+  .cats { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem 2rem; grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .cats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .cats li { border-top: 1px solid var(--line); padding-top: 0.75rem; }
+  .cats a { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; }
+  .cats p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.975rem; }
+</style>

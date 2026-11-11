@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { AUTHORS, SITE } from '../data/taxonomy';
+import { getPosts, postUrl, abs } from '../lib/site';
+import { ORG_ID } from '../lib/schema';
+const posts = await getPosts();
+const desk = AUTHORS.desk;
+const profile = {
+  '@type': 'ProfilePage',
+  url: abs('/authors/'),
+  name: 'Authors',
+  mainEntity: { '@type': 'Organization', name: desk.name, description: desk.bio, parentOrganization: { '@id': ORG_ID }, email: SITE.email },
+};
+---
+<Base title="Authors" description="Who writes Quetzal Review, and how stories are researched, sourced and updated." crumbs={[{ name: 'Home', path: '/' }, { name: 'Authors', path: '/authors/' }]} extraSchema={[profile]}>
+  <div class="wrap page">
+    <h1>Authors</h1>
+    <div class="prose">
+      <h2 id="desk">{desk.name}</h2>
+      <p class="meta">{desk.role}</p>
+      <p>{desk.bio}</p>
+      <p>Stories are written in a warm, story-led voice, but they are researched rather than lived: the editors do not claim first-hand experiences in their writing, and every fact that affects your safety, health, entry requirements or budget is linked to its source. When we add named contributors, each will have a profile here describing their own experience of Guatemala.</p>
+      <p>Write to the editors at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+      <h3>Stories by the editors</h3>
+      <ul>
+        {posts.filter((p) => p.data.author === 'desk').map((p) => <li><a href={postUrl(p)}>{p.data.title}</a></li>)}
+      </ul>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,177 @@
+---
+import { render } from 'astro:content';
+import { getImage, Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import PlanTrip from '../../components/PlanTrip.astro';
+import { PHOTOS, photoSource } from '../../data/photos';
+import { AUTHORS, CATEGORIES, DESTINATIONS, SITE } from '../../data/taxonomy';
+import { getPosts, postUrl, readingMinutes, wordCount, formatDate, isoDate, abs, hostOf, type Post } from '../../lib/site';
+import { ORG_ID, SITE_ID } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all: posts } }));
+}
+
+interface Props { post: Post; all: Post[] }
+const { post, all } = Astro.props;
+const d = post.data;
+const { Content } = await render(post);
+const photo = PHOTOS[d.hero];
+const author = AUTHORS[d.author] ?? AUTHORS.desk;
+const cat = d.categories[0];
+const minutes = readingMinutes(post.body);
+const url = postUrl(post);
+
+const related = d.related
+  .map((slug) => all.find((p) => p.id === slug))
+  .filter((p): p is Post => Boolean(p))
+  .slice(0, 3);
+for (const p of all) {
+  if (related.length >= 3) break;
+  if (p.id !== post.id && !related.includes(p) && p.data.categories.some((c) => d.categories.includes(c))) related.push(p);
+}
+
+const heroWidths = [480, 768, 1024, 1440, 1920];
+const heroSizes = '100vw';
+const heroImgs = await Promise.all(heroWidths.map((w) => getImage({ src: photo.src, width: w, format: 'webp', quality: 72 })));
+const srcset = heroImgs.map((img, i) => `${img.src} ${heroWidths[i]}w`).join(', ');
+const schemaImg = await getImage({ src: photo.src, width: 1200, format: 'jpg', quality: 78 });
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: CATEGORIES[cat].name, path: `/category/${cat}/` },
+  { name: d.title, path: url },
+];
+
+const blogPosting = {
+  '@type': 'BlogPosting',
+  '@id': `${abs(url)}#article`,
+  headline: d.title,
+  description: d.description,
+  url: abs(url),
+  mainEntityOfPage: abs(url),
+  image: { '@type': 'ImageObject', url: abs(schemaImg.src), width: 1200, height: Math.round((1200 * photo.src.height) / photo.src.width), creditText: `${photo.author} (${photo.license})`, license: photo.licenseUrl, acquireLicensePage: photoSource(photo) },
+  datePublished: isoDate(d.pubDate),
+  dateModified: isoDate(d.updatedDate),
+  wordCount: wordCount(post.body),
+  timeRequired: `PT${minutes}M`,
+  inLanguage: 'en-GB',
+  articleSection: d.categories.map((c) => CATEGORIES[c].name),
+  about: d.destinations.map((x) => ({ '@type': 'Place', name: DESTINATIONS[x].name, containedInPlace: { '@type': 'Country', name: 'Guatemala' } })),
+  author: { '@type': 'Organization', name: author.name, url: abs('/authors/'), parentOrganization: { '@id': ORG_ID } },
+  publisher: { '@id': ORG_ID },
+  isPartOf: { '@id': SITE_ID },
+  ...(d.sources.length ? { citation: d.sources.map((s) => s.url) } : {}),
+};
+---
+
+<Base
+  title={d.title}
+  description={d.description}
+  crumbs={crumbs}
+  ogImage={photo.src}
+  ogImageAlt={photo.alt}
+  ogType="article"
+  extraSchema={[blogPosting]}
+  preloadImage={{ srcset, sizes: heroSizes }}
+  articleTimes={{ published: isoDate(d.pubDate), modified: isoDate(d.updatedDate) }}
+>
+  <article class="post">
+    <header class="wrap post-head">
+      {d.advertisement && <p class="ad-label">Advertisement feature</p>}
+      <a class="eyebrow" href={`/category/${cat}/`}>{CATEGORIES[cat].name}</a>
+      <h1>{d.title}</h1>
+      <p class="standfirst">{d.description}</p>
+      <p class="meta byline">
+        By <a href="/authors/">{author.name}</a>
+        <span aria-hidden="true"> · </span>
+        Published <time datetime={isoDate(d.pubDate)}>{formatDate(d.pubDate)}</time>
+        <span aria-hidden="true"> · </span>
+        Last updated <time datetime={isoDate(d.updatedDate)}>{formatDate(d.updatedDate)}</time>
+        <span aria-hidden="true"> · </span>
+        {minutes} min read
+      </p>
+    </header>
+
+    <figure class="hero">
+      <img src={heroImgs[2].src} srcset={srcset} sizes={heroSizes} alt={photo.alt} width={photo.src.width} height={photo.src.height} fetchpriority="high" decoding="async" />
+      <figcaption class="wrap">
+        {photo.caption}. Photo: <a href={photoSource(photo)}>{photo.author}</a>, <a href={photo.licenseUrl} rel="license">{photo.license}</a>, via Wikimedia Commons.
+      </figcaption>
+    </figure>
+
+    <div class="wrap">
+      {
+        d.factsLastChecked && (
+          <aside class="checked" aria-label="When facts were checked">
+            <p>
+              <strong>Facts checked {formatDate(d.factsLastChecked)}.</strong> Health, entry and safety details in this story
+              link to the official source they come from. Advice can change at short notice, so check those sources again before
+              you travel.
+            </p>
+          </aside>
+        )
+      }
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <PlanTrip name={d.operator.name} url={d.operator.url} pitch={d.operator.pitch} title={d.title} />
+
+      {
+        d.sources.length > 0 && (
+          <section class="sources" aria-labelledby="sources-h">
+            <h2 id="sources-h">Sources</h2>
+            <p class="meta">Facts in this story come from these pages. Links to them are citations, not endorsements.</p>
+            <ol>
+              {d.sources.map((s) => (
+                <li>
+                  <a href={s.url} rel="nofollow">{s.title}</a>
+                  <span class="meta"> · {s.publisher} · {hostOf(s.url)} · accessed {formatDate(s.accessed)}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+
+      <p class="meta corrections">
+        Spotted something out of date? Email <a href={`mailto:${SITE.email}?subject=${encodeURIComponent('Correction: ' + d.title)}`}>{SITE.email}</a> and we will check it against the source and update the story.
+      </p>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="section related" aria-labelledby="related-h">
+        <div class="wrap">
+          <h2 id="related-h">Related stories</h2>
+          <div class="grid three">
+            {related.map((p) => <PostCard post={p} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .post-head { padding-top: 0.25rem; }
+  .post-head h1, .post-head p { max-width: 46rem; }
+  .standfirst { font-family: var(--serif); font-size: 1.3rem; line-height: 1.45; color: var(--muted); margin-bottom: 0.9rem; }
+  .byline { margin-bottom: 1.5rem; }
+  .hero { margin: 0 0 2rem; }
+  .hero img { width: 100%; max-height: 78vh; object-fit: cover; background: var(--sand); }
+  .hero figcaption { font-size: 0.85rem; color: var(--muted); padding-top: 0.5rem; }
+  .hero figcaption a { color: var(--muted); }
+  .checked { max-width: var(--measure); background: var(--red-tint); border-left: 4px solid var(--red); padding: 0.9rem 1rem 0.1rem; margin: 0 0 2rem; font-size: 0.975rem; border-radius: 0 var(--radius) var(--radius) 0; }
+  .sources { max-width: var(--measure); }
+  .sources ol { padding-left: 1.3rem; }
+  .sources li { margin-bottom: 0.6rem; }
+  .corrections { max-width: var(--measure); margin-top: 2rem; }
+  .related { border-top: 1px solid var(--line); margin-top: 1rem; }
+  .related h2 { margin-top: 0; }
+</style>

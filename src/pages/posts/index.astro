@@ -1,0 +1,12 @@
+---
+import ListingPage from '../../components/ListingPage.astro';
+import { getPosts } from '../../lib/site';
+const posts = await getPosts();
+---
+<ListingPage
+  title="All stories"
+  intro="Every Quetzal Review story, newest first. Each one lists its sources and shows when it was last updated."
+  description="Every Quetzal Review story about travel in Guatemala, newest first, with sources and last-updated dates."
+  posts={posts}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'All stories', path: '/posts/' }]}
+/>

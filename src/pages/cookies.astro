@@ -1,0 +1,10 @@
+---
+import InfoPage from '../components/InfoPage.astro';
+import { SITE } from '../data/taxonomy';
+---
+<InfoPage title="Cookie policy" description="Quetzal Review sets no cookies and uses no tracking." path="/cookies/">
+  <p><strong>Quetzal Review does not set any cookies.</strong> We do not use analytics, advertising, social media widgets or other tracking technologies, and we do not store anything in your browser.</p>
+  <p>Because we set no cookies, there is no cookie banner. If that ever changes, we will update this page and ask for your consent before setting any cookie that is not strictly necessary.</p>
+  <p>Websites we link to, including operators in the “Plan this trip” box, may use their own cookies. Check their policies when you visit them.</p>
+  <p>Questions: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+</InfoPage>

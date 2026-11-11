@@ -1,0 +1,36 @@
+---
+import { SITE } from '../data/taxonomy';
+interface Props { name: string; url: string; pitch: string; title: string }
+const { name, url, pitch, title } = Astro.props;
+const host = new URL(url).hostname;
+---
+<aside class="plan" aria-labelledby="plan-h">
+  <p class="plan-kicker">Plan this trip</p>
+  <h2 id="plan-h">Book it with {name}</h2>
+  <p>{pitch}</p>
+  <p class="plan-actions">
+    <a class="button" href={url}>Plan with {name}<span class="visually-hidden"> (opens {host})</span></a>
+    <a class="button secondary" href={SITE.directoryUrl}>Browse the Tourground directory</a>
+  </p>
+  <p class="plan-note">
+    {name} is a local travel company listed on Tourground, the directory of verified travel companies. Tourground
+    also publishes Quetzal Review, and no operator pays to appear in this box or to be mentioned in “{title}”.
+    <a href="/disclosure/">How we work with operators</a>.
+  </p>
+</aside>
+<style>
+  .plan {
+    max-width: var(--measure);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--green);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.25rem 0.5rem;
+    margin: 2.5rem 0;
+  }
+  .plan h2 { margin: 0 0 0.5rem; font-size: 1.45rem; }
+  .plan-kicker { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red-deep); margin: 0 0 0.25rem; }
+  .plan-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .plan-note { font-size: 0.875rem; color: var(--muted); }
+  @media (min-width: 40rem) { .plan { padding: 1.75rem 1.75rem 0.75rem; } }
+</style>

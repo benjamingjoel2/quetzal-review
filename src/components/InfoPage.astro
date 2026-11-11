@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { formatDate, isoDate, abs } from '../lib/site';
+import { ORG_ID, SITE_ID } from '../lib/schema';
+interface Props { title: string; description: string; path: string; reviewed?: Date; type?: string }
+const { title, description, path, reviewed = new Date('2026-11-11'), type = 'WebPage' } = Astro.props;
+const page = { '@type': type, '@id': `${abs(path)}#webpage`, name: title, description, url: abs(path), isPartOf: { '@id': SITE_ID }, publisher: { '@id': ORG_ID }, dateModified: isoDate(reviewed), inLanguage: 'en-GB' };
+---
+<Base title={title} description={description} crumbs={[{ name: 'Home', path: '/' }, { name: title, path }]} extraSchema={[page]}>
+  <div class="wrap page">
+    <h1>{title}</h1>
+    <p class="meta">Last reviewed <time datetime={isoDate(reviewed)}>{formatDate(reviewed)}</time></p>
+    <div class="prose">
+      <slot />
+    </div>
+  </div>
+</Base>
